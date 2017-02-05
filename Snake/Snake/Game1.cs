@@ -15,7 +15,7 @@ namespace Snake
         SpriteBatch spriteBatch;
 
         Snake[] bodyParts = new Snake[5];
-        Texture2D snakeBody;
+        Texture2D snakeBody, apple;
         KeyboardState kb;
 
         bool movingRight = true, movingLeft = false, movingUp = false, movingDown = false;
@@ -61,6 +61,7 @@ namespace Snake
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
             snakeBody = Content.Load<Texture2D>("Head");
+            apple = Content.Load<Texture2D>("Head");
 
 
             // TODO: use this.Content to load your game content here
@@ -182,7 +183,7 @@ namespace Snake
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Draw(GameTime gameTime)
         {
-            GraphicsDevice.Clear(Color.CornflowerBlue);
+            GraphicsDevice.Clear(Color.Black);
 
             spriteBatch.Begin();
             spriteBatch.Draw(snakeBody, bodyParts[0].getLocation(), Color.White);
