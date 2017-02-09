@@ -30,6 +30,7 @@ namespace Snake
         // not currently using 
         public void incLength()
         {
+            
         }
         // damages the snake
         public void hurtSnake20()

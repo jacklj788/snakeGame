@@ -28,7 +28,7 @@ namespace Snake
             graphics.PreferredBackBufferWidth = 1280;
             graphics.PreferredBackBufferHeight = 720;
             // forces the game to update 1/2th of a second. So twice a second. 
-            // Why? Snake doesn't need high FPS, in fact it's a game you could probably make in a windows form. This way I can achieve that "move .. move .. move .." feel that snake has.
+            // Turned out to be a bad idea. It limits how often a user can input commands, which makes it feel clunky and laggy
             //this.TargetElapsedTime = TimeSpan.FromSeconds(1.0f / 2f);
             Content.RootDirectory = "Content";
         }
@@ -46,6 +46,7 @@ namespace Snake
             bodyParts[0] = new Snake(400, 240, true, true);
             // these are hidden off to the side of the screen. Inatalised ready to be moved in.
             bodyParts[1] = new Snake(350, 240, false, false);
+            bodyParts[2] = new Snake(300, 240, false, false);
 
 
 
@@ -96,13 +97,16 @@ namespace Snake
                 movingUp = false;
 
                 float a = bodyParts[0].getLocation().Y;
-                // 200 > 20
-                if (bodyParts[1].getLocation().Y > a)
-                    bodyParts[1].moveUp();
-                else if (bodyParts[1].getLocation().Y < a)
-                    bodyParts[1].moveDown();
-                else
-                    bodyParts[1].moveRight();
+                for (int i = 1; i < 3; i++)
+                {
+                    // 200 > 20
+                    if (bodyParts[i].getLocation().Y > a)
+                        bodyParts[i].moveUp();
+                    else if (bodyParts[i].getLocation().Y < a)
+                        bodyParts[i].moveDown();
+                    else
+                        bodyParts[i].moveRight();
+                }
             }
 
             if (kb.IsKeyDown(Keys.Left) || movingLeft)
@@ -115,12 +119,15 @@ namespace Snake
 
                 float a = bodyParts[0].getLocation().Y;
                 // 200 > 20
-                if (bodyParts[1].getLocation().Y > a)
-                    bodyParts[1].moveUp();
-                else if (bodyParts[1].getLocation().Y < a)
-                    bodyParts[1].moveDown();
-                else
-                    bodyParts[1].moveLeft();
+                for (int i = 1; i < 3; i++)
+                {
+                    if (bodyParts[i].getLocation().Y > a)
+                        bodyParts[i].moveUp();
+                    else if (bodyParts[i].getLocation().Y < a)
+                        bodyParts[i].moveDown();
+                    else
+                        bodyParts[i].moveLeft();
+                }
             }
 
             if (kb.IsKeyDown(Keys.Up) || movingUp)
@@ -133,19 +140,22 @@ namespace Snake
                 bodyParts[0].moveUp();
                 // a = the X axis of the head
                 float a = bodyParts[0].getLocation().X;
-                if (bodyParts[1].getLocation().X < a)
+                for (int i = 1; i < 3; i++)
                 {
-                    // move the body [1] across to the location of [0] - 50 on the X Axis
-                    bodyParts[1].moveRight();
-                }
-                else if (bodyParts[1].getLocation().X > a)
-                {
-                    bodyParts[1].moveLeft();
-                }
-                else
-                {
-                    // Otherwise they're both on the same X axis, so start to make it follow the Y axis.
-                    bodyParts[1].moveUp();
+                    if (bodyParts[i].getLocation().X < a)
+                    {
+                        // move the body [1] across to the location of [0] - 50 on the X Axis
+                        bodyParts[i].moveRight();
+                    }
+                    else if (bodyParts[i].getLocation().X > a)
+                    {
+                        bodyParts[i].moveLeft();
+                    }
+                    else
+                    {
+                        // Otherwise they're both on the same X axis, so start to make it follow the Y axis.
+                        bodyParts[i].moveUp();
+                    }
                 }
 
             }
@@ -162,18 +172,20 @@ namespace Snake
                 bodyParts[0].moveDown();
                 // a = the X axis of the head
                 float a = bodyParts[0].getLocation().X;
-
-                if (bodyParts[1].getLocation().X < a)
+                for (int i = 1; i < 3; i++)
                 {
-                    // move the body [1] down to the location of [0]
-                    bodyParts[1].moveRight();
-                }
-                else if (bodyParts[1].getLocation().X > a)
-                    bodyParts[1].moveLeft();
-                else
-                {
-                    // Otherwise they're both on the same X axis, so start to make it follow the Y axis.
-                    bodyParts[1].moveDown();
+                    if (bodyParts[i].getLocation().X < a)
+                    {
+                        // move the body [1] down to the location of [0]
+                        bodyParts[i].moveRight();
+                    }
+                    else if (bodyParts[i].getLocation().X > a)
+                        bodyParts[i].moveLeft();
+                    else
+                    {
+                        // Otherwise they're both on the same X axis, so start to make it follow the Y axis.
+                        bodyParts[i].moveDown();
+                    }
                 }
             }
         }
@@ -188,6 +200,7 @@ namespace Snake
             spriteBatch.Begin();
             spriteBatch.Draw(snakeBody, bodyParts[0].getLocation(), Color.White);
             spriteBatch.Draw(snakeBody, bodyParts[1].getLocation(), Color.White);
+            spriteBatch.Draw(snakeBody, bodyParts[2].getLocation(), Color.White);
             spriteBatch.End();
 
             // TODO: Add your drawing code here
