@@ -15,7 +15,8 @@ namespace Snake
         SpriteBatch spriteBatch;
 
         Snake[] bodyParts = new Snake[5];
-        Texture2D snakeBody, apple;
+        Apple apple = new Apple();
+        Texture2D snakeBody, appleTexture;
         KeyboardState kb;
 
         bool movingRight = true, movingLeft = false, movingUp = false, movingDown = false;
@@ -25,8 +26,8 @@ namespace Snake
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
-            graphics.PreferredBackBufferWidth = 1280;
-            graphics.PreferredBackBufferHeight = 720;
+            graphics.PreferredBackBufferWidth = 700;
+            graphics.PreferredBackBufferHeight = 700;
             // forces the game to update 1/2th of a second. So twice a second. 
             // Turned out to be a bad idea. It limits how often a user can input commands, which makes it feel clunky and laggy
             //this.TargetElapsedTime = TimeSpan.FromSeconds(1.0f / 2f);
@@ -62,7 +63,7 @@ namespace Snake
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
             snakeBody = Content.Load<Texture2D>("Head");
-            apple = Content.Load<Texture2D>("Head");
+            appleTexture = Content.Load<Texture2D>("Apple");
 
 
             // TODO: use this.Content to load your game content here
@@ -201,6 +202,7 @@ namespace Snake
             spriteBatch.Draw(snakeBody, bodyParts[0].getLocation(), Color.White);
             spriteBatch.Draw(snakeBody, bodyParts[1].getLocation(), Color.White);
             spriteBatch.Draw(snakeBody, bodyParts[2].getLocation(), Color.White);
+            spriteBatch.Draw(appleTexture, apple.getLocation(), Color.White);
             spriteBatch.End();
 
             // TODO: Add your drawing code here
