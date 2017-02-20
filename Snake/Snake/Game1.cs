@@ -22,8 +22,6 @@ namespace Snake
         Rectangle[] bodyZones = new Rectangle[10];
         Rectangle appleZone = new Rectangle(); 
 
-        bool movingRight = true, movingLeft = false, movingUp = false, movingDown = false;
-
         //bool movingRight = false, movingLeft = false, movingUp = false, movingDown = false;
 
         public Game1()
@@ -98,7 +96,7 @@ namespace Snake
             // You win if you get to length 10. 
             if (Snake.length < 10)
             { 
-                if (kb.IsKeyDown(Keys.Right) || movingRight)
+                if (kb.IsKeyDown(Keys.Right) || bodyParts[0].movingRight)
                 {
                     if (bodyZones[0].Intersects(appleZone))
                     {
@@ -112,28 +110,9 @@ namespace Snake
                     }
 
                     bodyParts[0].moveRight();
-                    movingRight = true;
-                    movingLeft = false;
-                    movingDown = false;
-                    movingUp = false;
-
-                    float a = bodyParts[0].getLocation().Y;
-                    for (int i = 1; i < 10; i++)
-                    {
-                        if (bodyParts[i].getState())
-                        {
-                            // 200 > 20
-                            if (bodyParts[i].getLocation().Y > a)
-                                bodyParts[i].moveUp();
-                            else if (bodyParts[i].getLocation().Y < a)
-                                bodyParts[i].moveDown();
-                            else
-                                bodyParts[i].moveRight();
-                        }
-                    }
                 }
 
-                if (kb.IsKeyDown(Keys.Left) || movingLeft)
+                if (kb.IsKeyDown(Keys.Left) || bodyParts[0].movingLeft)
                 {
                     if (bodyZones[0].Intersects(appleZone))
                     {
@@ -146,28 +125,9 @@ namespace Snake
                         Snake.length = Snake.length + 1;
                     } 
                     bodyParts[0].moveLeft();
-                    movingRight = false;
-                    movingLeft = true;
-                    movingDown = false;
-                    movingUp = false;
-
-                    float a = bodyParts[0].getLocation().Y;
-                    // 200 > 20
-                    for (int i = 1; i < 10; i++)
-                    {
-                        if (bodyParts[i].getState())
-                        {
-                            if (bodyParts[i].getLocation().Y > a)
-                                bodyParts[i].moveUp();
-                            else if (bodyParts[i].getLocation().Y < a)
-                                bodyParts[i].moveDown();
-                            else
-                                bodyParts[i].moveLeft();
-                        }
-                    }
                 }
 
-                if (kb.IsKeyDown(Keys.Up) || movingUp)
+                if (kb.IsKeyDown(Keys.Up) || bodyParts[0].movingUp)
                 {
                     if (bodyZones[0].Intersects(appleZone))
                     {
@@ -179,40 +139,12 @@ namespace Snake
                         apple.respawn();
                         Snake.length = Snake.length + 1;
                     }
-
-                    movingUp = true;
-                    movingRight = false;
-                    movingLeft = false;
-                    movingDown = false;
                     // moves the body part [0] up
                     bodyParts[0].moveUp();
-                    // a = the X axis of the head
-                    float a = bodyParts[0].getLocation().X;
-                    for (int i = 1; i < 10; i++)
-                    {
-                        if (bodyParts[i].getState())
-                        {
-                            if (bodyParts[i].getLocation().X < a)
-                            {
-                                // move the body [1] across to the location of [0] - 50 on the X Axis
-                                bodyParts[i].moveRight();
-                            }
-                            else if (bodyParts[i].getLocation().X > a)
-                            {
-                                bodyParts[i].moveLeft();
-                            }
-                            else
-                            {
-                                // Otherwise they're both on the same X axis, so start to make it follow the Y axis.
-                                bodyParts[i].moveUp();
-                            }
-                        }
-                    }
-
                 }
 
                 // Need to make it so if you're going up you can't go down, only left or right.. etc..
-                if (kb.IsKeyDown(Keys.Down) || movingDown)
+                if (kb.IsKeyDown(Keys.Down) || bodyParts[0].movingDown)
                 {
                     if (bodyZones[0].Intersects(appleZone))
                     {
@@ -225,31 +157,58 @@ namespace Snake
                         Snake.length = Snake.length + 1;
                     }
 
-                    movingRight = false;
-                    movingLeft = false;
-                    movingDown = true;
-                    movingUp = false;
-
                     // moves the body part [0] down
                     bodyParts[0].moveDown();
-                    // a = the X axis of the head
-                    float a = bodyParts[0].getLocation().X;
-                    for (int i = 1; i < 10; i++)
+                }
+
+                // Logic for bodies, not head
+                for (int i = 1; i < 10; i++)
+                {
+                    if (bodyParts[i].getState())
                     {
-                        if (bodyParts[i].getState())
+                        if (bodyParts[i-1].movingRight)
                         {
-                            if (bodyParts[i].getLocation().X < a)
+                            if (bodyParts[i].getLocation().Y == bodyParts[i - 1].getLocation().Y)
                             {
-                                // move the body [1] down to the location of [0]
                                 bodyParts[i].moveRight();
                             }
-                            else if (bodyParts[i].getLocation().X > a)
-                                bodyParts[i].moveLeft();
+                            else if (bodyParts[i].getLocation().Y < bodyParts[i - 1].getLocation().Y)
+                                bodyParts[i].moveDown();
                             else
+                                bodyParts[i].moveUp();
+                        }
+                        else if (bodyParts[i - 1].movingLeft)
+                        {
+                            if (bodyParts[i].getLocation().Y == bodyParts[i - 1].getLocation().Y)
                             {
-                                // Otherwise they're both on the same X axis, so start to make it follow the Y axis.
+                                bodyParts[i].moveLeft();
+                            }
+                            else if (bodyParts[i].getLocation().Y < bodyParts[i - 1].getLocation().Y)
+                                bodyParts[i].moveDown();
+                            else
+                                bodyParts[i].moveUp();
+                        }
+                        else if (bodyParts[i - 1].movingUp)
+                        {
+                            if (bodyParts[i].getLocation().X == bodyParts[i - 1].getLocation().X)
+                            {
+                                bodyParts[i].moveUp();
+                            }
+                            else if (bodyParts[i].getLocation().X < bodyParts[i - 1].getLocation().X)
+                                bodyParts[i].moveRight();
+                            else
+                                bodyParts[i].moveLeft();
+                        }
+                        else if (bodyParts[i - 1].movingDown)
+                        {
+                            if (bodyParts[i].getLocation().X == bodyParts[i - 1].getLocation().X)
+                            {
                                 bodyParts[i].moveDown();
                             }
+                            else if (bodyParts[i].getLocation().X < bodyParts[i - 1].getLocation().X)
+                                bodyParts[i].moveRight();
+                            else
+                                bodyParts[i].moveLeft();
                         }
                     }
                 }

@@ -15,6 +15,8 @@ namespace Snake
         public bool state;
         bool head;
 
+        public bool movingLeft, movingRight, movingUp, movingDown;
+
         public Snake(int x, int y)
         {
             snakeLocation.X = x;
@@ -26,6 +28,14 @@ namespace Snake
             snakeLocation.Y = y;
             this.state = state;
             this.head = head;
+            // Starts of moving right.
+            if (head)
+            {
+                movingDown = false;
+                movingLeft = false;
+                movingRight = true;
+                movingUp = false;
+            }
 
         }
         // Take in the postion of a body piece
@@ -61,21 +71,37 @@ namespace Snake
         public void moveRight()
         {
             snakeLocation.X = snakeLocation.X + 2.5f;
+            movingDown = false;
+            movingLeft = false;
+            movingRight = true;
+            movingUp = false;
         }
 
         public void moveLeft()
         {
             snakeLocation.X = snakeLocation.X - 2.5f;
+            movingDown = false;
+            movingLeft = true;
+            movingRight = false;
+            movingUp = false;
         }
 
         public void moveUp()
         {
             snakeLocation.Y = snakeLocation.Y - 2.5f;
+            movingDown = false;
+            movingLeft = false;
+            movingRight = false;
+            movingUp = true;
         }
 
         public void moveDown()
         {
             snakeLocation.Y = snakeLocation.Y + 2.5f;
+            movingDown = true;
+            movingLeft = false;
+            movingRight = false;
+            movingUp = false;
         }
 
         // Is the piece active? should it be moving?
