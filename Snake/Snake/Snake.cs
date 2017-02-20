@@ -29,11 +29,29 @@ namespace Snake
 
         }
         // Take in the postion of a body piece
-        public void setLocation(Vector2 location)
+        public void setLocationRight(Vector2 location)
         {
             // Sets it to the correct spot.
             snakeLocation.X = location.X - 50;
             snakeLocation.Y = location.Y;
+        }
+        public void setLocationLeft(Vector2 location)
+        {
+            // Sets it to the correct spot.
+            snakeLocation.X = location.X + 50;
+            snakeLocation.Y = location.Y;
+        }
+        public void setLocationUp(Vector2 location)
+        {
+            // Sets it to the correct spot.
+            snakeLocation.X = location.X;
+            snakeLocation.Y = location.Y + 50;
+        }
+        public void setLocationDown(Vector2 location)
+        {
+            // Sets it to the correct spot.
+            snakeLocation.X = location.X;
+            snakeLocation.Y = location.Y - 50;
         }
         public Vector2 getLocation()
         {
