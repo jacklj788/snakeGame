@@ -10,7 +10,7 @@ namespace Snake
     class Snake
     {
         private int health = 100;
-        public static int length = 3;
+        public static int length = 1;
         private Vector2 snakeLocation;
         public bool state;
         bool head;

@@ -47,10 +47,10 @@ namespace Snake
             // Head
             bodyParts[0] = new Snake(400, 240, true, true);
             // starting body parts
-            bodyParts[1] = new Snake(350, 240, true, false);
-            bodyParts[2] = new Snake(300, 240, true, false);
+            //bodyParts[1] = new Snake(350, 240, false, false);
+            //bodyParts[2] = new Snake(300, 240, false, false);
             // these are hidden off to the side of the screen. Inatalised ready to be moved in.
-            for (int i = 3; i < 10; i++)
+            for (int i = 1; i < 10; i++)
             {
                 // Inactive
                 bodyParts[i] = new Snake(-500, -500, false, false);
@@ -94,51 +94,39 @@ namespace Snake
                 Exit();
             kb = Keyboard.GetState();
             // You win if you get to length 10. 
+
+            if (bodyZones[0].Intersects(appleZone))
+            {
+                // Activate the next body part
+                bodyParts[Snake.length].setStateTrue();
+
+                if (bodyParts[Snake.length - 1].movingRight)
+                    bodyParts[Snake.length].setLocationRight(bodyParts[Snake.length - 1].getLocation());
+                else if (bodyParts[Snake.length - 1].movingLeft)
+                    bodyParts[Snake.length].setLocationLeft(bodyParts[Snake.length - 1].getLocation());
+                else if (bodyParts[Snake.length - 1].movingUp)
+                    bodyParts[Snake.length].setLocationUp(bodyParts[Snake.length - 1].getLocation());
+                else
+                    bodyParts[Snake.length].setLocationDown(bodyParts[Snake.length - 1].getLocation());
+
+                apple.respawn();
+                Snake.length = Snake.length + 1;
+            }
+
             if (Snake.length < 10)
             { 
                 if (kb.IsKeyDown(Keys.Right) || bodyParts[0].movingRight)
                 {
-                    if (bodyZones[0].Intersects(appleZone))
-                    {
-                        // Activate the next body part
-                        bodyParts[Snake.length].setStateTrue();
-
-                        bodyParts[Snake.length].setLocationRight(bodyParts[Snake.length - 1].getLocation());
-
-                        apple.respawn();
-                        Snake.length = Snake.length + 1;
-                    }
-
                     bodyParts[0].moveRight();
                 }
 
                 if (kb.IsKeyDown(Keys.Left) || bodyParts[0].movingLeft)
                 {
-                    if (bodyZones[0].Intersects(appleZone))
-                    {
-                        // Activate the next body part
-                        bodyParts[Snake.length].setStateTrue();
-
-                        bodyParts[Snake.length].setLocationLeft(bodyParts[Snake.length - 1].getLocation());
-
-                        apple.respawn();
-                        Snake.length = Snake.length + 1;
-                    } 
                     bodyParts[0].moveLeft();
                 }
 
                 if (kb.IsKeyDown(Keys.Up) || bodyParts[0].movingUp)
                 {
-                    if (bodyZones[0].Intersects(appleZone))
-                    {
-                        // Activate the next body part
-                        bodyParts[Snake.length].setStateTrue();
-
-                        bodyParts[Snake.length].setLocationUp(bodyParts[Snake.length - 1].getLocation());
-
-                        apple.respawn();
-                        Snake.length = Snake.length + 1;
-                    }
                     // moves the body part [0] up
                     bodyParts[0].moveUp();
                 }
@@ -172,7 +160,7 @@ namespace Snake
                             {
                                 bodyParts[i].moveRight();
                             }
-                            else if (bodyParts[i].getLocation().Y < bodyParts[i - 1].getLocation().Y)
+                            else if (bodyParts[i].getLocation().Y <= bodyParts[i - 1].getLocation().Y)
                                 bodyParts[i].moveDown();
                             else
                                 bodyParts[i].moveUp();
@@ -183,7 +171,7 @@ namespace Snake
                             {
                                 bodyParts[i].moveLeft();
                             }
-                            else if (bodyParts[i].getLocation().Y < bodyParts[i - 1].getLocation().Y)
+                            else if (bodyParts[i].getLocation().Y <= bodyParts[i - 1].getLocation().Y)
                                 bodyParts[i].moveDown();
                             else
                                 bodyParts[i].moveUp();
@@ -194,18 +182,18 @@ namespace Snake
                             {
                                 bodyParts[i].moveUp();
                             }
-                            else if (bodyParts[i].getLocation().X < bodyParts[i - 1].getLocation().X)
+                            else if (bodyParts[i].getLocation().X <= bodyParts[i - 1].getLocation().X)
                                 bodyParts[i].moveRight();
                             else
                                 bodyParts[i].moveLeft();
                         }
-                        else if (bodyParts[i - 1].movingDown)
+                        else
                         {
                             if (bodyParts[i].getLocation().X == bodyParts[i - 1].getLocation().X)
                             {
                                 bodyParts[i].moveDown();
                             }
-                            else if (bodyParts[i].getLocation().X < bodyParts[i - 1].getLocation().X)
+                            else if (bodyParts[i].getLocation().X <= bodyParts[i - 1].getLocation().X)
                                 bodyParts[i].moveRight();
                             else
                                 bodyParts[i].moveLeft();
@@ -221,7 +209,7 @@ namespace Snake
             // and the apple.
             appleZone = new Rectangle((int)apple.getLocation().X, (int)apple.getLocation().Y, 50, 50);
 
-            base.Update(gameTime);
+           // base.Update(gameTime);
 
         }
         /// <summary>
