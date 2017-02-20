@@ -14,10 +14,13 @@ namespace Snake
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
 
-        Snake[] bodyParts = new Snake[5];
+        Snake[] bodyParts = new Snake[10];
         Apple apple = new Apple();
         Texture2D snakeBody, appleTexture;
         KeyboardState kb;
+
+        Rectangle[] bodyZones = new Rectangle[10];
+        Rectangle appleZone = new Rectangle(); 
 
         bool movingRight = true, movingLeft = false, movingUp = false, movingDown = false;
 
@@ -43,13 +46,17 @@ namespace Snake
         protected override void Initialize()
         {
             // TODO: Add your initialization logic here
-            // first body will appear in the middle of the screen.
+            // Head
             bodyParts[0] = new Snake(400, 240, true, true);
+            // starting body parts
+            bodyParts[1] = new Snake(350, 240, true, false);
+            bodyParts[2] = new Snake(300, 240, true, false);
             // these are hidden off to the side of the screen. Inatalised ready to be moved in.
-            bodyParts[1] = new Snake(350, 240, false, false);
-            bodyParts[2] = new Snake(300, 240, false, false);
-
-
+            for (int i = 3; i < 10; i++)
+            {
+                // Inactive
+                bodyParts[i] = new Snake(-500, -500, false, false);
+            }
 
             base.Initialize();
         }
@@ -88,6 +95,8 @@ namespace Snake
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
             kb = Keyboard.GetState();
+            
+
 
             if (kb.IsKeyDown(Keys.Right) || movingRight)
             {
@@ -98,15 +107,18 @@ namespace Snake
                 movingUp = false;
 
                 float a = bodyParts[0].getLocation().Y;
-                for (int i = 1; i < 3; i++)
+                for (int i = 1; i < 10; i++)
                 {
-                    // 200 > 20
-                    if (bodyParts[i].getLocation().Y > a)
-                        bodyParts[i].moveUp();
-                    else if (bodyParts[i].getLocation().Y < a)
-                        bodyParts[i].moveDown();
-                    else
-                        bodyParts[i].moveRight();
+                    if (bodyParts[i].getState())
+                    {
+                        // 200 > 20
+                        if (bodyParts[i].getLocation().Y > a)
+                            bodyParts[i].moveUp();
+                        else if (bodyParts[i].getLocation().Y < a)
+                            bodyParts[i].moveDown();
+                        else
+                            bodyParts[i].moveRight();
+                    }
                 }
             }
 
@@ -122,12 +134,15 @@ namespace Snake
                 // 200 > 20
                 for (int i = 1; i < 3; i++)
                 {
-                    if (bodyParts[i].getLocation().Y > a)
-                        bodyParts[i].moveUp();
-                    else if (bodyParts[i].getLocation().Y < a)
-                        bodyParts[i].moveDown();
-                    else
-                        bodyParts[i].moveLeft();
+                    if (bodyParts[i].getState())
+                    {
+                        if (bodyParts[i].getLocation().Y > a)
+                            bodyParts[i].moveUp();
+                        else if (bodyParts[i].getLocation().Y < a)
+                            bodyParts[i].moveDown();
+                        else
+                            bodyParts[i].moveLeft();
+                    }
                 }
             }
 
@@ -143,19 +158,22 @@ namespace Snake
                 float a = bodyParts[0].getLocation().X;
                 for (int i = 1; i < 3; i++)
                 {
-                    if (bodyParts[i].getLocation().X < a)
+                    if (bodyParts[i].getState())
                     {
-                        // move the body [1] across to the location of [0] - 50 on the X Axis
-                        bodyParts[i].moveRight();
-                    }
-                    else if (bodyParts[i].getLocation().X > a)
-                    {
-                        bodyParts[i].moveLeft();
-                    }
-                    else
-                    {
-                        // Otherwise they're both on the same X axis, so start to make it follow the Y axis.
-                        bodyParts[i].moveUp();
+                        if (bodyParts[i].getLocation().X < a)
+                        {
+                            // move the body [1] across to the location of [0] - 50 on the X Axis
+                            bodyParts[i].moveRight();
+                        }
+                        else if (bodyParts[i].getLocation().X > a)
+                        {
+                            bodyParts[i].moveLeft();
+                        }
+                        else
+                        {
+                            // Otherwise they're both on the same X axis, so start to make it follow the Y axis.
+                            bodyParts[i].moveUp();
+                        }
                     }
                 }
 
@@ -175,20 +193,34 @@ namespace Snake
                 float a = bodyParts[0].getLocation().X;
                 for (int i = 1; i < 3; i++)
                 {
-                    if (bodyParts[i].getLocation().X < a)
+                    if (bodyParts[i].getState())
                     {
-                        // move the body [1] down to the location of [0]
-                        bodyParts[i].moveRight();
-                    }
-                    else if (bodyParts[i].getLocation().X > a)
-                        bodyParts[i].moveLeft();
-                    else
-                    {
-                        // Otherwise they're both on the same X axis, so start to make it follow the Y axis.
-                        bodyParts[i].moveDown();
+                        if (bodyParts[i].getLocation().X < a)
+                        {
+                            // move the body [1] down to the location of [0]
+                            bodyParts[i].moveRight();
+                        }
+                        else if (bodyParts[i].getLocation().X > a)
+                            bodyParts[i].moveLeft();
+                        else
+                        {
+                            // Otherwise they're both on the same X axis, so start to make it follow the Y axis.
+                            bodyParts[i].moveDown();
+                        }
                     }
                 }
             }
+
+            // Places a rectangle at the same position of each body part
+            for (int i = 0; i < 10; i++)
+            {
+                bodyZones[i] = new Rectangle((int)bodyParts[i].getLocation().X, (int)bodyParts[i].getLocation().Y, 50, 50);
+            }
+            // and the apple.
+            appleZone = new Rectangle((int)apple.getLocation().X, (int)apple.getLocation().Y, 50, 50);
+
+            base.Update(gameTime);
+
         }
         /// <summary>
         /// This is called when the game should draw itself.
@@ -199,9 +231,11 @@ namespace Snake
             GraphicsDevice.Clear(Color.Black);
 
             spriteBatch.Begin();
-            spriteBatch.Draw(snakeBody, bodyParts[0].getLocation(), Color.White);
-            spriteBatch.Draw(snakeBody, bodyParts[1].getLocation(), Color.White);
-            spriteBatch.Draw(snakeBody, bodyParts[2].getLocation(), Color.White);
+            for (int i = 0; i < 10; i++)
+            {
+                if(bodyParts[i].getState())
+                    spriteBatch.Draw(snakeBody, bodyParts[i].getLocation(), Color.White);
+            }
             spriteBatch.Draw(appleTexture, apple.getLocation(), Color.White);
             spriteBatch.End();
 
