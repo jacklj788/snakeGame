@@ -217,7 +217,7 @@ namespace Snake
                 bodyZones[i] = new Rectangle((int)bodyParts[i].getLocation().X, (int)bodyParts[i].getLocation().Y, 50, 50);
             }
             // and the apple.
-            appleZone = new Rectangle((int)apple.getLocation().X, (int)apple.getLocation().Y, 50, 50);
+            appleZone = new Rectangle((int)apple.getLocation().X, (int)apple.getLocation().Y, 50, 40);
 
             base.Update(gameTime);
 

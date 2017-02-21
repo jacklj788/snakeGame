@@ -16,7 +16,6 @@ namespace Snake
         public Apple()
         {
             rnd = new Random();
-            rnd.Next(0, 7);
             location.X = randomNumbers[rnd.Next(0, 5)];
             location.Y = randomNumbers[rnd.Next(0, 5)];
         }
