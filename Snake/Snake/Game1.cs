@@ -115,7 +115,8 @@ namespace Snake
             // Stop if you hit yourself. Excluse body[1] because it will overlap the head when it turns.
             for (int i = 2; i < bodyZones.Length; i++)
             {
-                if (bodyZones[0].Intersects(bodyZones[i]))
+                // If it hits itself OR the border of the screen.
+                if (bodyZones[0].Intersects(bodyZones[i]) || bodyZones[0].Location.X > 650 || bodyZones[0].Location.X < 0 || bodyZones[0].Location.Y > 650 || bodyZones[0].Location.Y < 0)
                 {
                     // The game pauses when the snake length is > 50, so this is basically a way of "killing" the snake.
                     Snake.length = 100;
