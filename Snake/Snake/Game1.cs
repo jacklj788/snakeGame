@@ -99,7 +99,7 @@ namespace Snake
             {
                 // Activate the next body part
                 bodyParts[Snake.length].setStateTrue();
-
+                // Determines where to spawn the next body part in from.
                 if (bodyParts[Snake.length - 1].movingRight)
                     bodyParts[Snake.length].setLocationRight(bodyParts[Snake.length - 1].getLocation());
                 else if (bodyParts[Snake.length - 1].movingLeft)
@@ -108,99 +108,99 @@ namespace Snake
                     bodyParts[Snake.length].setLocationUp(bodyParts[Snake.length - 1].getLocation());
                 else
                     bodyParts[Snake.length].setLocationDown(bodyParts[Snake.length - 1].getLocation());
-
+                // Move the apple to a new spot
                 apple.respawn();
+                // The snake grew my 1, need to communicate that
                 Snake.length = Snake.length + 1;
             }
 
             if (Snake.length < 10)
             { 
-                if (kb.IsKeyDown(Keys.Right) || bodyParts[0].movingRight)
+                // Player controls the direction of the head. They don't need to have to hold the key down, that's now how snake played
+                // But the snake should also always be moving.
+                if ((kb.IsKeyDown(Keys.Right) || bodyParts[0].movingRight) && !(bodyParts[0].movingLeft))
                 {
                     bodyParts[0].moveRight();
                 }
-
-                if (kb.IsKeyDown(Keys.Left) || bodyParts[0].movingLeft)
+                // if they're going left, they can't also go right..
+                if ((kb.IsKeyDown(Keys.Left) || bodyParts[0].movingLeft) && !(bodyParts[0].movingRight))
                 {
                     bodyParts[0].moveLeft();
                 }
 
-                if (kb.IsKeyDown(Keys.Up) || bodyParts[0].movingUp)
+                if ((kb.IsKeyDown(Keys.Up) || bodyParts[0].movingUp) && !(bodyParts[0].movingDown))
                 {
                     // moves the body part [0] up
                     bodyParts[0].moveUp();
                 }
 
-                // Need to make it so if you're going up you can't go down, only left or right.. etc..
-                if (kb.IsKeyDown(Keys.Down) || bodyParts[0].movingDown)
+                // if you're going up you can't go down, only left or right.. etc..
+                if ((kb.IsKeyDown(Keys.Down) || bodyParts[0].movingDown) && !(bodyParts[0].movingUp))
                 {
-                    if (bodyZones[0].Intersects(appleZone))
-                    {
-                        // Activate the next body part
-                        bodyParts[Snake.length].setStateTrue();
-
-                        bodyParts[Snake.length].setLocationDown(bodyParts[Snake.length - 1].getLocation());
-
-                        apple.respawn();
-                        Snake.length = Snake.length + 1;
-                    }
-
-                    // moves the body part [0] down
                     bodyParts[0].moveDown();
                 }
 
                 // Logic for bodies, not head
                 for (int i = 1; i < 10; i++)
                 {
+                    // Are they active?
                     if (bodyParts[i].getState())
                     {
+                        // Is it moving right?
                         if (bodyParts[i-1].movingRight)
                         {
-                            if (bodyParts[i].getLocation().Y == bodyParts[i - 1].getLocation().Y)
+                            // If the body is lower than the next piece, move it up
+                            if (bodyParts[i].getLocation().Y > bodyParts[i - 1].getLocation().Y)
                             {
-                                bodyParts[i].moveRight();
-                            }
-                            else if (bodyParts[i].getLocation().Y <= bodyParts[i - 1].getLocation().Y)
-                                bodyParts[i].moveDown();
-                            else
                                 bodyParts[i].moveUp();
+                            }
+                            // is it higher? move it down?
+                            else if (bodyParts[i].getLocation().Y < bodyParts[i - 1].getLocation().Y)
+                                bodyParts[i].moveDown();
+                            // Oh, it's on the correct Y axis? Perfect - move right.
+                            else
+                                bodyParts[i].moveRight();
                         }
                         else if (bodyParts[i - 1].movingLeft)
                         {
-                            if (bodyParts[i].getLocation().Y == bodyParts[i - 1].getLocation().Y)
+                            if (bodyParts[i].getLocation().Y > bodyParts[i - 1].getLocation().Y)
                             {
-                                bodyParts[i].moveLeft();
+                                bodyParts[i].moveUp();
                             }
-                            else if (bodyParts[i].getLocation().Y <= bodyParts[i - 1].getLocation().Y)
+                            else if (bodyParts[i].getLocation().Y < bodyParts[i - 1].getLocation().Y)
                                 bodyParts[i].moveDown();
                             else
-                                bodyParts[i].moveUp();
+                                bodyParts[i].moveLeft();
                         }
                         else if (bodyParts[i - 1].movingUp)
                         {
-                            if (bodyParts[i].getLocation().X == bodyParts[i - 1].getLocation().X)
+                            if (bodyParts[i].getLocation().X > bodyParts[i - 1].getLocation().X)
                             {
-                                bodyParts[i].moveUp();
+                                bodyParts[i].moveLeft();
                             }
-                            else if (bodyParts[i].getLocation().X <= bodyParts[i - 1].getLocation().X)
+                            else if (bodyParts[i].getLocation().X < bodyParts[i - 1].getLocation().X)
                                 bodyParts[i].moveRight();
                             else
-                                bodyParts[i].moveLeft();
+                                bodyParts[i].moveUp();
                         }
                         else
                         {
-                            if (bodyParts[i].getLocation().X == bodyParts[i - 1].getLocation().X)
+                            if (bodyParts[i].getLocation().X > bodyParts[i - 1].getLocation().X)
                             {
-                                bodyParts[i].moveDown();
+                                bodyParts[i].moveLeft();
                             }
-                            else if (bodyParts[i].getLocation().X <= bodyParts[i - 1].getLocation().X)
+                            else if (bodyParts[i].getLocation().X < bodyParts[i - 1].getLocation().X)
                                 bodyParts[i].moveRight();
                             else
-                                bodyParts[i].moveLeft();
+                                bodyParts[i].moveDown();
                         }
                     }
                 }
             }
+            // My way of fixing a bug. Until I can figure out why it's happening in the first place, this will have to do.
+            // See the function itself for more details. 
+            cureHeadAche();
+
             // Places a rectangle at the same position of each body part
             for (int i = 0; i < 10; i++)
             {
@@ -209,7 +209,7 @@ namespace Snake
             // and the apple.
             appleZone = new Rectangle((int)apple.getLocation().X, (int)apple.getLocation().Y, 50, 50);
 
-           // base.Update(gameTime);
+            base.Update(gameTime);
 
         }
         /// <summary>
@@ -223,7 +223,6 @@ namespace Snake
             spriteBatch.Begin();
             for (int i = 0; i < 10; i++)
             {
-                if(bodyParts[i].getState())
                     spriteBatch.Draw(snakeBody, bodyParts[i].getLocation(), Color.White);
             }
             spriteBatch.Draw(appleTexture, apple.getLocation(), Color.White);
@@ -232,6 +231,25 @@ namespace Snake
             // TODO: Add your drawing code here
 
             base.Draw(gameTime);
+        }
+
+        public void cureHeadAche()
+        {
+            // Need to actually be more than 1 part
+            if (Snake.length >= 2)
+            {
+                // Determines if the head is more than 50 places away from the body. (It should never be).
+                // However for some reason it is, which is creating a gap that gets larger and larger. It didn't use to be like this - new "clean" code that actually works introduced
+                // this bug. 
+                if (bodyParts[0].getLocation().X > (bodyParts[1].getLocation().X + 50))
+                    bodyParts[0].backStepRight();
+                else if (bodyParts[0].getLocation().X < (bodyParts[1].getLocation().X - 50))
+                    bodyParts[0].backStepLeft();
+                else if (bodyParts[0].getLocation().Y > (bodyParts[1].getLocation().Y + 50))
+                    bodyParts[0].backStepUp();
+                else if (bodyParts[0].getLocation().Y < (bodyParts[1].getLocation().Y - 50))
+                    bodyParts[0].backStepDown();
+            }
         }
     }
 }

@@ -9,7 +9,6 @@ namespace Snake
 {
     class Snake
     {
-        private int health = 100;
         public static int length = 1;
         private Vector2 snakeLocation;
         public bool state;
@@ -112,6 +111,23 @@ namespace Snake
         public bool getState()
         {
             return state;
+        }
+
+        public void backStepRight()
+        {
+            snakeLocation.X = snakeLocation.X - 2.5f;
+        }
+        public void backStepLeft()
+        {
+            snakeLocation.X = snakeLocation.X + 2.5f;
+        }
+        public void backStepUp()
+        {
+            snakeLocation.Y = snakeLocation.Y - 2.5f;
+        }
+        public void backStepDown()
+        {
+            snakeLocation.Y = snakeLocation.Y + 2.5f;
         }
     }
 }
