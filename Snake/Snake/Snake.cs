@@ -112,7 +112,7 @@ namespace Snake
         {
             return state;
         }
-
+        // Used to fix the bug - see CureHeadache() in the Game1.cs 
         public void backStepRight()
         {
             snakeLocation.X = snakeLocation.X - 2.5f;

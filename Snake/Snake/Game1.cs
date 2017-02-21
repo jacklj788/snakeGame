@@ -14,12 +14,12 @@ namespace Snake
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
 
-        Snake[] bodyParts = new Snake[10];
+        Snake[] bodyParts = new Snake[50];
         Apple apple = new Apple();
         Texture2D snakeBody, appleTexture;
         KeyboardState kb;
 
-        Rectangle[] bodyZones = new Rectangle[10];
+        Rectangle[] bodyZones = new Rectangle[50];
         Rectangle appleZone = new Rectangle(); 
 
         //bool movingRight = false, movingLeft = false, movingUp = false, movingDown = false;
@@ -50,7 +50,7 @@ namespace Snake
             //bodyParts[1] = new Snake(350, 240, false, false);
             //bodyParts[2] = new Snake(300, 240, false, false);
             // these are hidden off to the side of the screen. Inatalised ready to be moved in.
-            for (int i = 1; i < 10; i++)
+            for (int i = 1; i < bodyParts.Length; i++)
             {
                 // Inactive
                 bodyParts[i] = new Snake(-500, -500, false, false);
@@ -113,8 +113,8 @@ namespace Snake
                 // The snake grew my 1, need to communicate that
                 Snake.length = Snake.length + 1;
             }
-
-            if (Snake.length < 10)
+            // Changed variable numbers to bodyParts.Length so i don't need to keep changing it.
+            if (Snake.length < bodyParts.Length)
             { 
                 // Player controls the direction of the head. They don't need to have to hold the key down, that's now how snake played
                 // But the snake should also always be moving.
@@ -141,7 +141,7 @@ namespace Snake
                 }
 
                 // Logic for bodies, not head
-                for (int i = 1; i < 10; i++)
+                for (int i = 1; i < bodyParts.Length; i++)
                 {
                     // Are they active?
                     if (bodyParts[i].getState())
@@ -202,7 +202,7 @@ namespace Snake
             cureHeadAche();
 
             // Places a rectangle at the same position of each body part
-            for (int i = 0; i < 10; i++)
+            for (int i = 0; i < bodyParts.Length  - 1; i++)
             {
                 bodyZones[i] = new Rectangle((int)bodyParts[i].getLocation().X, (int)bodyParts[i].getLocation().Y, 50, 50);
             }
@@ -221,7 +221,7 @@ namespace Snake
             GraphicsDevice.Clear(Color.Black);
 
             spriteBatch.Begin();
-            for (int i = 0; i < 10; i++)
+            for (int i = 0; i < bodyParts.Length; i++)
             {
                     spriteBatch.Draw(snakeBody, bodyParts[i].getLocation(), Color.White);
             }
