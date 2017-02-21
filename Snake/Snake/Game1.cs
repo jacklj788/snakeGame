@@ -20,7 +20,7 @@ namespace Snake
         KeyboardState kb;
 
         Rectangle[] bodyZones = new Rectangle[50];
-        Rectangle appleZone = new Rectangle(); 
+        Rectangle appleZone = new Rectangle();
 
         //bool movingRight = false, movingLeft = false, movingUp = false, movingDown = false;
 
@@ -93,7 +93,6 @@ namespace Snake
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
             kb = Keyboard.GetState();
-            // You win if you get to length 10. 
 
             if (bodyZones[0].Intersects(appleZone))
             {
@@ -113,6 +112,16 @@ namespace Snake
                 // The snake grew my 1, need to communicate that
                 Snake.length = Snake.length + 1;
             }
+            // Stop if you hit yourself. Excluse body[1] because it will overlap the head when it turns.
+            for (int i = 2; i < bodyZones.Length; i++)
+            {
+                if (bodyZones[0].Intersects(bodyZones[i]))
+                {
+                    // The game pauses when the snake length is > 50, so this is basically a way of "killing" the snake.
+                    Snake.length = 100;
+                }
+            }
+
             // Changed variable numbers to bodyParts.Length so i don't need to keep changing it.
             if (Snake.length < bodyParts.Length)
             { 
