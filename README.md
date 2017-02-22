@@ -1,2 +1,2 @@
 # snakeGame
-Snake clone written in C#
+Snake clone written in C# with the Monogame framework. 
